@@ -1,117 +1,148 @@
-const maxTasks = 10;
-const taskInputsDiv = document.getElementById("tasks");
-const matrixTable = document.getElementById("matrix");
-const resultsDiv = document.getElementById("results");
+// State
+let tasks = [];
+let pairs = [];
+let currentPairIndex = 0;
+let wins = [];
 
-for(let i = 0; i < maxTasks; i++) {
-  const input = document.createElement("input");
-  input.type = "text";
-  input.placeholder = String.fromCharCode(65 + i) + " Task";
-  input.id = 'task' + i;
-  taskInputsDiv.appendChild(input);
-  if ((i + 1) % 5 === 0) taskInputsDiv.appendChild(document.createElement("br"));
+const numTasksInput = document.getElementById('num-tasks');
+const setNumBtn = document.getElementById('set-num-btn');
+const addTaskBtn = document.getElementById('add-task-btn');
+const tasksContainer = document.getElementById('tasks-container');
+const startCompareBtn = document.getElementById('start-compare-btn');
+
+const comparisonSection = document.getElementById('comparison');
+const comparisonText = document.getElementById('comparison-text');
+const choice1Btn = document.getElementById('choice1-btn');
+const choice2Btn = document.getElementById('choice2-btn');
+const progressText = document.getElementById('progress');
+
+const resultsSection = document.getElementById('results');
+const resultList = document.getElementById('result-list');
+
+// Helper - render task input boxes according to tasks array
+function renderTaskInputs() {
+  tasksContainer.innerHTML = '';
+  tasks.forEach((task, i) => {
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.value = task || '';
+    input.placeholder = `Task ${i + 1}`;
+    input.dataset.index = i;
+    input.addEventListener('input', e => {
+      tasks[e.target.dataset.index] = e.target.value.trim();
+      checkStartReady();
+    });
+    tasksContainer.appendChild(input);
+  });
+  checkStartReady();
 }
 
-let tasks = [];
-let comparisons = {};
+// Enable start button only if all tasks have text
+function checkStartReady() {
+  startCompareBtn.disabled = tasks.length < 2 || tasks.some(t => !t);
+}
 
-function initializeMatrix() {
-  tasks = [];
-  comparisons = {};
-  for(let i = 0; i < maxTasks; i++) {
-    const val = document.getElementById('task' + i).value.trim();
-    if (val) tasks.push(val);
+// Create all pairs from tasks indices
+function createPairs() {
+  pairs = [];
+  for (let i = 0; i < tasks.length; i++) {
+    for (let j = i + 1; j < tasks.length; j++) {
+      pairs.push([i, j]);
+    }
   }
-  if(tasks.length < 2) {
-    alert("Enter at least 2 tasks to prioritize!");
+}
+
+// Start comparisons
+function startComparisons() {
+  wins = new Array(tasks.length).fill(0);
+  currentPairIndex = 0;
+  document.getElementById('task-entry').style.display = 'none';
+  comparisonSection.style.display = 'block';
+  resultsSection.style.display = 'none';
+  showNextComparison();
+}
+
+// Show current comparison question
+function showNextComparison() {
+  if (currentPairIndex >= pairs.length) {
+    showResults();
     return;
   }
-  buildMatrix();
-  resultsDiv.innerHTML = "";
+  const [i, j] = pairs[currentPairIndex];
+  comparisonText.textContent = `Which is more important?`;
+  choice1Btn.textContent = tasks[i];
+  choice2Btn.textContent = tasks[j];
+  progressText.textContent = `Comparison ${currentPairIndex + 1} of ${pairs.length}`;
 }
 
-function buildMatrix() {
-  matrixTable.innerHTML = '';
-  const headerRow = document.createElement('tr');
-  headerRow.appendChild(document.createElement('th'));
-  tasks.forEach(task => {
-    const th = document.createElement('th');
-    th.textContent = task;
-    headerRow.appendChild(th);
+// Record win and advance
+function recordWin(winnerIndex) {
+  wins[winnerIndex]++;
+  currentPairIndex++;
+  showNextComparison();
+}
+
+// Display final task checklist ordered by wins descending
+function showResults() {
+  comparisonSection.style.display = 'none';
+  resultsSection.style.display = 'block';
+  const sortedTasks = tasks.map((task, i) => ({ task, wins: wins[i] }))
+    .sort((a, b) => b.wins - a.wins);
+
+  resultList.innerHTML = '';
+  sortedTasks.forEach(({ task }, i) => {
+    const li = document.createElement('li');
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.id = `task-checkbox-${i}`;
+    const label = document.createElement('label');
+    label.htmlFor = checkbox.id;
+    label.textContent = task;
+    li.appendChild(checkbox);
+    li.appendChild(label);
+    resultList.appendChild(li);
   });
-  matrixTable.appendChild(headerRow);
+}
 
-  for(let i = 0; i < tasks.length; i++) {
-    const row = document.createElement('tr');
-    const headerCell = document.createElement('th');
-    headerCell.textContent = tasks[i];
-    row.appendChild(headerCell);
-
-    for(let j = 0; j < tasks.length; j++) {
-      const cell = document.createElement('td');
-      if(i < j) {
-        const key = `${i}-${j}`;
-        cell.textContent = "?";
-        cell.addEventListener('click', () => {
-          if(!comparisons[key]) {
-            comparisons[key] = i;
-          } else if(comparisons[key] === i) {
-            comparisons[key] = j;
-          } else {
-            delete comparisons[key];
-          }
-          renderMatrix();
-          calculateResults();
-        });
-      } else if(i === j) {
-        cell.style.backgroundColor = '#ddd';
-      } else {
-        const revKey = `${j}-${i}`;
-        if(comparisons[revKey] === i) cell.textContent = "◀";
-        else if(comparisons[revKey] === j) cell.textContent = "▶";
-        else cell.textContent = "";
-        cell.style.backgroundColor = '#f0f0f0';
-      }
-      row.appendChild(cell);
-    }
-    matrixTable.appendChild(row);
+// Event listeners
+setNumBtn.addEventListener('click', () => {
+  const num = Number(numTasksInput.value);
+  if (num < 2 || num > 20) {
+    alert('Please enter a number between 2 and 20');
+    return;
   }
-}
+  tasks = Array(num).fill('');
+  renderTaskInputs();
+});
 
-function renderMatrix() {
-  for(let i=0; i<tasks.length; i++) {
-    for(let j=0; j<tasks.length; j++) {
-      if(i < j) {
-        const key = `${i}-${j}`;
-        const cell = matrixTable.rows[i+1].cells[j+1];
-        if(comparisons[key] === i) {
-          cell.textContent = tasks[i];
-          cell.classList.add('selected');
-        } else if(comparisons[key] === j) {
-          cell.textContent = tasks[j];
-          cell.classList.add('selected');
-        } else {
-          cell.textContent = "?";
-          cell.classList.remove('selected');
-        }
-      } else if(i > j) {
-        const revKey = `${j}-${i}`;
-        const cell = matrixTable.rows[i+1].cells[j+1];
-        if(comparisons[revKey] === i) cell.textContent = "◀";
-        else if(comparisons[revKey] === j) cell.textContent = "▶";
-        else cell.textContent = "";
-      }
-    }
+addTaskBtn.addEventListener('click', () => {
+  if (tasks.length >= 20) {
+    alert('Maximum 20 tasks allowed');
+    return;
   }
-}
+  tasks.push('');
+  renderTaskInputs();
+});
 
-function calculateResults() {
-  const scores = new Array(tasks.length).fill(0);
-  Object.entries(comparisons).forEach(([key, winner]) => {
-    scores[winner]++;
-  });
-  const sorted = tasks.map((task, idx) => ({task, score: scores[idx]}))
-    .sort((a,b) => b.score - a.score);
-  resultsDiv.innerHTML = "<h2>Ranking Results</h2><ol>" + 
-    sorted.map(item => `<li>${item.task} (${item.score} wins)</li>`).join('') + "</ol>";
-}
+startCompareBtn.addEventListener('click', () => {
+  if (tasks.some(t => !t)) {
+    alert('Please fill in all task fields');
+    return;
+  }
+  createPairs();
+  startComparisons();
+});
+
+choice1Btn.addEventListener('click', () => {
+  const [i, ] = pairs[currentPairIndex];
+  recordWin(i);
+});
+
+choice2Btn.addEventListener('click', () => {
+  const [, j] = pairs[currentPairIndex];
+  recordWin(j);
+});
+
+// Initialize with default tasks count and inputs
+tasks = Array(Number(numTasksInput.value)).fill('');
+renderTaskInputs();
