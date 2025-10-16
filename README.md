@@ -1,56 +1,40 @@
-# TallyFocus
-A decision-aid webapp that helps users rank tasks when they feel overwhelmed.
+# Prioritization Matrix Web App
 
-Instead of forcing users to rate or drag items, it asks simple binary questions like:
+## Project Overview
+This is a lightweight, simple web app built using plain HTML, CSS, and JavaScript that allows users to prioritize a list of tasks using a pairwise comparison matrix, inspired by the Archer & Olive Prioritization Matrix method.
 
-“Which is more important right now: Do laundry or Finish report?”
+## Features
+- Enter up to 10 tasks to prioritize.
+- Interactive matrix to compare each task against others.
+- Clickable cells to select which task is more important in each pair.
+- Automatic tally and ranking of tasks based on user selections.
+- Simple and fast, no dependencies or build setup required.
+- Runs directly in any modern web browser.
 
-It then:
-Builds priority scores using tally marks (each time a task wins a comparison).
-Generates a ranked to-do list based on scores.
-(Optional) Lets you add estimated times and start timers for tasks.
+## How to Use
+1. Open the  in your web browser.
+2. Enter between 2 and 10 tasks in the input fields.
+3. Click "Start Prioritizing" to generate the comparison matrix.
+4. Click on each cell marked with `?` to select which task wins the comparison.
+5. Watch the results update in real time below the matrix with your prioritized task list.
 
-🧩 Core Features
-Stage	Feature	Description
-1️⃣ Input	Task Entry	Add tasks manually (simple text list).
-2️⃣ Compare	Pairwise Decisions	App randomly shows two tasks → you choose one.
-3️⃣ Tally	Auto Count	Each task gets +1 every time it “wins.”
-4️⃣ Result	Sorted To-Do List	App ranks tasks by tally score (highest first).
-5️⃣ Optional	Time & Timer	Add estimated time per task and run a countdown timer.
+## Limitations
+- Does not currently handle complex tie-breaking beyond visual comparison.
+- No persistent storage: refreshing the page clears data.
+- Basic styling for simplicity; can be enhanced with custom CSS.
 
-⚙️ Technical Plan
-We can build this in React + TailwindCSS (lightweight and fast).
-Here’s how we could structure it:
+## Installation
+No installation necessary! Just open the HTML file in a modern browser or host it on any static web server.
 
-Components
-TaskInput → Add, edit, delete tasks.
-CompareTasks → Show two random tasks to choose from.
-ResultsList → Sorted final list with tallies.
-TimerSection (optional) → Add time & countdown per task.
+## Future Improvements
+- Add localStorage to save progress.
+- Improve visual styling and responsiveness.
+- Export prioritized list as CSV or PDF.
+- Add support for larger task lists or additional priority metrics.
 
-Logic Flow
-flowchart TD
-A[Enter Tasks] --> B[Pairwise Comparisons]
-B --> C[User Chooses One]
-C --> D[Update Tally]
-D --> E[Repeat until enough comparisons]
-E --> F[Generate Ranked List]
-F --> G[Option to Add Time + Start Timer]
+## License
+This project is open source and free to use without restrictions.
 
-🧮 Simple Algorithm (Pairwise Tally System)
-// tasks = [{ name: "Task 1", tally: 0 }, ...]
-function recordChoice(winnerIndex) {
-  tasks[winnerIndex].tally++;
-}
+---
 
-// After comparisons:
-const rankedTasks = tasks.sort((a, b) => b.tally - a.tally);
-
-We can also include a comparison limit, e.g. each pair shown once or random until the user stops.
-
-🧠 Future Enhancements
-Save state in localStorage (so you can resume later).
-“Focus Mode” → timer view only.
-Visualization (triangle grid or heatmap of tallies).
-
-Export as text or CSV.
+Feel free to customize or extend this as needed for your use case!
