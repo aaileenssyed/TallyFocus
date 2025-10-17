@@ -123,3 +123,28 @@ input[type="checkbox"] {
     opacity: 0;
   }
 }
+
+#tasks-container::-webkit-scrollbar, #result-list::-webkit-scrollbar {
+  width: 10px;
+}
+
+#tasks-container::-webkit-scrollbar-track, #result-list::-webkit-scrollbar-track {
+  background: #f3eefc;
+  border-radius: 10px;
+}
+
+#tasks-container::-webkit-scrollbar-thumb, #result-list::-webkit-scrollbar-thumb {
+  background: #a183d0;
+  border-radius: 10px;
+}
+
+#tasks-container::-webkit-scrollbar-thumb:hover, #result-list::-webkit-scrollbar-thumb:hover {
+  background: #7b6393;
+}
+
+#tasks-container, #result-list {
+  max-height: 300px;     /* Limit height */
+  overflow-y: auto;      /* Show vertical scrollbar when content overflows */
+  scrollbar-width: thin; /* Firefox scrollbar style */
+  scrollbar-color: #a183d0 #f3eefc; /* thumb and track colors */
+}
