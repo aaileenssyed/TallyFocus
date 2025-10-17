@@ -7,29 +7,41 @@
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
-  <h1>TallyFocus</h1>
+  <audio id="clickSound" src="https://assets.mixkit.co/sfx/preview/mixkit-select-click-1109.mp3"></audio>
 
-  <section id="task-entry">
-    <label for="num-tasks">How many tasks?</label>
-    <input type="number" id="num-tasks" min="2" max="20" value="3" />
-    <button id="set-num-btn">Set Number</button>
-    <button id="add-task-btn">Add Task</button>
-    <div id="tasks-container"></div>
-    <button id="start-compare-btn" disabled>Start Comparing</button>
-  </section>
+  <div class="focus-box">
+    <h1>🎮 TallyFocus</h1>
 
-  <section id="comparison" style="display:none;">
-    <div id="comparison-text"></div>
-    <button id="choice1-btn"></button>
-    <button id="choice2-btn"></button>
-    <div id="progress"></div>
-  </section>
+    <section id="task-entry">
+      <label for="num-tasks">How many tasks do you need to complete?</label>
+      <input type="number" id="num-tasks" min="2" max="20" value="3" />
+      <button class="gbutton" id="set-num-btn">Set Number</button>
+      <button class="gbutton" id="add-task-btn">Add Task</button>
+      <div id="tasks-container"></div>
+      <button class="gbutton" id="start-compare-btn" disabled>Start Comparing ⚔️</button>
+    </section>
 
-  <section id="results" style="display:none;">
-    <h2>Task Priority List</h2>
-    <ul id="result-list"></ul>
-  </section>
+    <section id="comparison" style="display:none;">
+      <div id="comparison-text"></div>
+      <button class="gbutton" id="choice1-btn"></button>
+      <button class="gbutton" id="choice2-btn"></button>
+      <div id="progress"></div>
+    </section>
 
-  <script src="js/script.js"></script>
+    <section id="results" style="display:none;">
+      <h2>You can do it!</h2>
+      <ul id="result-list"></ul>
+    </section>
+  </div>
+
+  <div id="confetti-container"></div>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+<audio id="celebration-sound" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_de5d823b4e.mp3" preload="auto"></audio>
+<audio id="clickSound" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_a3d1f21a0e.mp3" preload="auto"></audio>
+<audio id="celebration-sound" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_de5d823b4e.mp3" preload="auto"></audio>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+<audio id="clickSound" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_a3d1f21a0e.mp3" preload="auto"></audio>
+<audio id="celebration-sound" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_de5d823b4e.mp3" preload="auto"></audio>
+<script src="js/script.js"></script>
 </body>
 </html>
